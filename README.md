@@ -15,7 +15,7 @@ A polished, full-featured version running locally. Demonstrates what's possible 
 
 ### `colab-version/` - Google Colab Notebook (Gradio)
 A complete version that runs entirely in Google Colab. No installation required.
-- Gradio web interface with 3 tabs
+- Gradio web interface with 4 tabs (Optimize, Library, History, Settings)
 - PDF upload + text paste support
 - AI-powered JD analysis and resume optimization
 - Google Drive storage by category
@@ -24,8 +24,10 @@ A complete version that runs entirely in Google Colab. No installation required.
 
 ### `workshop/` - Workshop Materials
 Everything you need to run or follow the workshop.
-- **[prompt-guide.md](workshop/prompt-guide.md)** - 4-session prompt guide for building the app from scratch
+- **[live-demo-prompts.md](workshop/live-demo-prompts.md)** - 5-session live coding prompts (start here)
+- **[prompt-guide.md](workshop/prompt-guide.md)** - Self-paced prompt guide with troubleshooting
 - **[lesson-plan.md](workshop/lesson-plan.md)** - Detailed 60-minute instructor script with timing
+- **[presentation-plan.md](workshop/presentation-plan.md)** - Slide deck outline for Gamma
 
 ### `sample-data/` - Demo Data
 - Sample resume (Alex Chen - ML/Data professional)
@@ -90,7 +92,7 @@ Full prompts for each session are in **[workshop/prompt-guide.md](workshop/promp
 |-----------|------------|---------------|
 | Frontend | React + Tailwind | Gradio |
 | Backend | FastAPI | Inline Python |
-| AI | Gemini 1.5 Flash | Gemini 1.5 Flash |
+| AI | Gemini 2.0 Flash | Gemini 2.0 Flash |
 | PDF Parsing | PyMuPDF | PyMuPDF |
 | Storage | Local filesystem | Google Drive |
 | Deployment | localhost | Colab + Gradio share link |

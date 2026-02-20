@@ -5,7 +5,8 @@ A complete Resume Optimizer running in Google Colab with a Gradio interface.
 ## Quick Start
 
 1. Open `resume_optimizer.ipynb` in Google Colab:
-   [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/)
+   [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/REPO_OWNER/ai-resume-optimizer/blob/main/colab-version/resume_optimizer.ipynb)
+   > **Note:** Update `REPO_OWNER` in the badge URL with your GitHub username after pushing to GitHub. Alternatively, you can upload the notebook manually to Colab.
 
 2. Run all cells in order
 3. When prompted, authorize Google Drive access

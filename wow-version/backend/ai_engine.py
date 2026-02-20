@@ -39,7 +39,7 @@ class ResumeAI:
     def configure(self, api_key: str) -> None:
         """Set (or change) the Gemini API key and instantiate the model."""
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel("gemini-1.5-flash")
+        self.model = genai.GenerativeModel("gemini-2.0-flash")
 
     @property
     def is_ready(self) -> bool:
@@ -95,10 +95,10 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
 """
         return self._generate_json(prompt)
 
-    def generate_questions(self, resume_text: str, jd_analysis: dict) -> list[dict]:
-        """Compare resume against JD analysis and produce 2-3 clarifying questions.
+    def generate_questions(self, resume_text: str, jd_analysis: dict) -> dict:
+        """Compare resume against JD analysis and produce skill gaps, questions, and strengths.
 
-        Each question is a dict with keys: id, question, why
+        Returns a dict with keys: missing_skills, questions, strengths
         """
         jd_json = json.dumps(jd_analysis, indent=2)
         prompt = f"""You are a career coach helping someone tailor their resume to a specific job.
@@ -107,14 +107,19 @@ Below you will find:
 1. The candidate's current resume text.
 2. A structured analysis of the target job description.
 
-Your task: identify 2-3 gaps or ambiguities where the resume does NOT
-clearly demonstrate a skill or experience the job requires. For each gap,
-write a short clarifying question that asks the candidate for more detail.
+Your task: analyze the gaps between the resume and the job requirements, then return a JSON object with exactly these three keys:
 
-Return a JSON **array** of objects, each with exactly these keys:
-- "id": integer starting at 1
-- "question": string - the question to ask the candidate
-- "why": string - a brief explanation of why this matters for the job
+1. "missing_skills": an array of 3-6 skills/technologies the job requires but the resume does NOT clearly demonstrate. Each item has:
+   - "skill": string - the skill or technology name
+   - "relevance": string - one sentence explaining why this matters for the job
+
+2. "questions": an array of 2-3 clarifying questions to ask the candidate. Each item has:
+   - "id": integer starting at 1
+   - "question": string - the question to ask
+   - "why": string - brief explanation of why this matters
+   - "suggested_answer": string - a plausible draft answer based on what you can infer from the resume (the candidate will edit this)
+
+3. "strengths": an array of 2-3 strings, each a short sentence describing something the resume already does well for this job.
 
 Return ONLY valid JSON. No explanation, no markdown, no extra text.
 
@@ -131,6 +136,7 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
         resume_text: str,
         jd_analysis: dict,
         answers: list[dict],
+        selected_skills: list[str] | None = None,
     ) -> str:
         """Return the full text of an optimized resume.
 
@@ -143,12 +149,24 @@ Return ONLY valid JSON. No explanation, no markdown, no extra text.
         answers : list[dict]
             The candidate's answers to the clarifying questions.
             Each dict has keys ``id``, ``question``, ``answer``.
+        selected_skills : list[str] | None
+            Skills the candidate wants highlighted in the optimized resume.
         """
         jd_json = json.dumps(jd_analysis, indent=2)
         answers_text = "\n".join(
             f"Q{a.get('id', '?')}: {a.get('question', '')}\nA: {a.get('answer', '')}"
             for a in answers
+            if a.get('answer', '').strip()
         )
+
+        skills_section = ""
+        if selected_skills:
+            skills_section = f"""
+--- SKILLS TO HIGHLIGHT ---
+The candidate wants these skills emphasized (they may have experience not shown in the resume):
+{', '.join(selected_skills)}
+"""
+
         prompt = f"""You are a professional resume writer with deep expertise in ATS
 optimization and modern hiring practices.
 
@@ -174,5 +192,5 @@ Return ONLY the final resume text. No commentary, no markdown fences.
 
 --- CANDIDATE'S ADDITIONAL ANSWERS ---
 {answers_text}
-"""
+{skills_section}"""
         return self._generate(prompt).strip()

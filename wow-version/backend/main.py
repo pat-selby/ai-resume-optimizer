@@ -75,6 +75,7 @@ class OptimizeRequest(BaseModel):
     resume_text: str
     jd_analysis: dict[str, Any]
     answers: list[AnswerItem]
+    selected_skills: list[str] = []
 
 
 class SaveResumeRequest(BaseModel):
@@ -139,12 +140,12 @@ async def analyze_jd(body: AnalyzeJDRequest):
 
 @app.post("/api/generate-questions")
 async def generate_questions(body: GenerateQuestionsRequest):
-    """Get clarifying questions by comparing resume against JD analysis."""
+    """Get skill gaps, clarifying questions, and strengths by comparing resume against JD."""
     if not ai.is_ready:
         raise HTTPException(status_code=400, detail="AI engine not configured. Set an API key first.")
     try:
-        questions = ai.generate_questions(body.resume_text, body.jd_analysis)
-        return {"questions": questions}
+        result = ai.generate_questions(body.resume_text, body.jd_analysis)
+        return result
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Question generation failed: {exc}")
 
@@ -156,7 +157,9 @@ async def optimize(body: OptimizeRequest):
         raise HTTPException(status_code=400, detail="AI engine not configured. Set an API key first.")
     try:
         answers_dicts = [a.model_dump() for a in body.answers]
-        optimized = ai.optimize_resume(body.resume_text, body.jd_analysis, answers_dicts)
+        optimized = ai.optimize_resume(
+            body.resume_text, body.jd_analysis, answers_dicts, body.selected_skills
+        )
         return {"optimized_resume": optimized}
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Optimization failed: {exc}")
@@ -213,6 +216,7 @@ async def list_resumes():
                     "modified": datetime.fromtimestamp(
                         f.stat().st_mtime, tz=timezone.utc
                     ).isoformat(),
+                    "content": f.read_text(encoding="utf-8", errors="replace"),
                 })
         result[category] = files
 

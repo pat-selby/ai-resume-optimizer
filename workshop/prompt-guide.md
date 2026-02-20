@@ -74,10 +74,10 @@ You should see a Gradio interface appear below Cell 2 with two text areas, a but
 > Here is what I need:
 >
 > 1. A setup cell that:
->    - Installs the google-generativeai package
->    - Imports the library
->    - Creates a function to initialize Gemini with an API key
->    - Uses the model "gemini-1.5-flash"
+>    - Installs the google-genai package (NOT the deprecated google-generativeai)
+>    - Imports with: from google import genai
+>    - Creates a client with: genai.Client(api_key=key)
+>    - Uses the model "gemini-2.0-flash"
 >
 > 2. Update my Gradio app to:
 >    - Add a text input at the top for the Gemini API key (use type="password" so it is hidden)
@@ -111,7 +111,7 @@ You should see a Gradio interface appear below Cell 2 with two text areas, a but
 - **403 or PERMISSION_DENIED error** -- Your API key may be invalid or expired. Generate a new one at [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
 - **"API key not set" or similar message** -- Make sure you clicked the "Set API Key" button and saw a confirmation before clicking "Optimize Resume."
 - **Rate limit error** -- The free Gemini tier has a requests-per-minute limit. Wait 30 seconds and try again.
-- **The AI gave code that imports the wrong package** -- Make sure the import is `google.generativeai`, not `google.ai.generativelanguage` or `openai`.
+- **The AI gave code that imports the wrong package** -- Make sure it uses `from google import genai` (the google-genai package), NOT the deprecated `google.generativeai`.
 
 ---
 

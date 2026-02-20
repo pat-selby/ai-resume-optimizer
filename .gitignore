@@ -8,3 +8,9 @@ data/
 dist/
 build/
 .vite/
+.agents/
+.claude/
+.cursor/
+.kiro/
+.superdesign/
+docs/
