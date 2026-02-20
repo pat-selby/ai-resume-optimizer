@@ -152,7 +152,7 @@
 
 **Troubleshooting:**
 - 403/PERMISSION_DENIED: API key may be invalid -- have them regenerate at aistudio.google.com/apikey
-- Wrong import: Make sure it's `google.generativeai`, not something else
+- Wrong import: Make sure it's `from google import genai` (google-genai package), not the deprecated `google.generativeai`
 - Rate limit: Wait 30 seconds, try again
 
 ---
